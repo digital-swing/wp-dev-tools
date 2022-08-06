@@ -14,6 +14,10 @@
   "commitBodyTable": true,
   "versioning": "loose",
   "rangeStrategy": "pin",
+  "ignoreDeps": [
+    "digitalswing/php-ansible",
+    "circleci/mariadb"
+  ],
   "packageRules": [
     {
       "addLabels": [
