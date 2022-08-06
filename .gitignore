@@ -1,0 +1,8 @@
+# Composer
+/vendor
+
+# Junk files
+.DS_Store
+
+# Logs
+.history
