@@ -88,7 +88,12 @@ commands:
       - run:
           command: |
             git clone -b develop git@github.com:digital-swing/bedrock-trellis-ds.git project
-            cd project
+            cd project/public_html
+            if [ "$CIRCLE_BRANCH" == "main" ]; then
+                BRANCH="main"
+            else
+                BRANCH="$CIRCLE_BRANCH"
+            fi
             composer require digital-swing/wp-dev-tools:dev-$CIRCLE_BRANCH
   prepare_ansible:
     description: Load API keys and passwords into required files
