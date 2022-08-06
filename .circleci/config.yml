@@ -33,6 +33,55 @@ executors:
     docker:
       - image: "digitalswing/php-ansible:8.0"
 commands:
+  add_key_to_known_hosts:
+    description: Adds SSH key to known_hosts (if it matches a fingerprint)
+
+    parameters:
+      domain:
+        type: string
+      key_type:
+        type: string
+      fingerprint:
+        type: string
+
+    steps:
+      - run:
+          name: Add "<< parameters.key_type >>" key from << parameters.domain >> to known_hosts
+          command: |
+            # Fetch publicly available key
+            SCAN=$(ssh-keyscan -t << parameters.key_type >> << parameters.domain >>)
+            echo "*** scanned key: $SCAN"
+            # Compute fingerprint
+            SCAN_FINGERPRINT=$(echo "$SCAN" | ssh-keygen -lf - )
+            echo "*** scanned fingerprint: $SCAN_FINGERPRINT"
+            echo "*** known fingerprint: << parameters.fingerprint >>"
+            if [[ "$SCAN_FINGERPRINT" =~ "<< parameters.fingerprint >>" ]]; then
+              echo "Scanned key matches known fingerprint, adding..."
+              mkdir -p ~/.ssh
+              echo "$SCAN" >> ~/.ssh/known_hosts
+              chmod 0700 ~/.ssh
+              chmod 0600 ~/.ssh/known_hosts
+            else
+              echo "Scanned key does not match known fingerprint, not adding."
+              exit 1
+            fi
+  add_github_key_to_known_hosts:
+    description: Adds SSH key to known_hosts (if it matches a fingerprint)
+    steps:
+      - add_key_to_known_hosts:
+          domain: github.com
+          key_type: ecdsa
+          fingerprint: "SHA256:p2QAMXNIC1TJYWeIOttrVc98/R1BUFWu3/LiyKgUfQM"
+
+      - add_key_to_known_hosts:
+          domain: github.com
+          key_type: rsa
+          fingerprint: "SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8"
+
+      - add_key_to_known_hosts:
+          domain: github.com
+          key_type: ed25519
+          fingerprint: "SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU"
   checkout:
     description: Clone bedrock-trellis-ds and require current package branch
     steps:
@@ -435,6 +484,7 @@ jobs:
         name: mysql
     working_directory: /tmp
     steps:
+      - add_github_key_to_known_hosts
       - checkout
       - prepare_ansible
       - find_wp_install
@@ -477,6 +527,7 @@ jobs:
         name: mysql
     working_directory: /tmp
     steps:
+      - add_github_key_to_known_hosts
       - checkout
       - prepare_ansible
       - attach_workspace:
@@ -622,6 +673,7 @@ jobs:
     description: Code static analysis
     working_directory: /tmp
     steps:
+      - add_github_key_to_known_hosts
       - checkout
       - prepare_ansible
       - provision_server:
@@ -672,6 +724,7 @@ jobs:
           - project
         type: enum
     steps:
+      - add_github_key_to_known_hosts
       - checkout
       - browser-tools/install-chrome:
           chrome-version: "90.0.4430.212"
@@ -834,6 +887,7 @@ jobs:
           security reasons
         type: string
     steps:
+      - add_github_key_to_known_hosts
       - checkout
       - attach_workspace:
           at: /tmp
@@ -896,6 +950,7 @@ jobs:
     executor: base
     working_directory: /tmp
     steps:
+      - add_github_key_to_known_hosts
       - checkout
       - attach_workspace:
           at: /tmp
