@@ -1,0 +1,203 @@
+{
+  "enabled": true,
+  "baseBranches": [
+    "main"
+  ],
+  "extends": [
+    "config:base",
+    "schedule:nonOfficeHours",
+    ":semanticCommitTypeAll(chore)"
+  ],
+  "automerge": true,
+  "separateMultipleMajor": true,
+  "timezone": "Europe/Paris",
+  "commitBodyTable": true,
+  "versioning": "loose",
+  "rangeStrategy": "pin",
+  "packageRules": [
+    {
+      "addLabels": [
+        "SemVer Major"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ]
+    },
+    {
+      "addLabels": [
+        "SemVer Minor"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ]
+    },
+    {
+      "addLabels": [
+        "SemVer Patch"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "digest",
+        "bump"
+      ]
+    },
+    {
+      "addLabels": [
+        "Lang PHP"
+      ],
+      "matchLanguages": [
+        "php"
+      ]
+    },
+    {
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "groupName": "php (minor)",
+      "groupSlug": "php-minor-",
+      "prPriority": 3
+    },
+    {
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "additionalBranchPrefix": "php-major-",
+      "prPriority": 2
+    },
+    {
+      "matchDepTypes": [
+        "require-dev"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "additionalBranchPrefix": "php-dev-major-",
+      "prPriority": -2
+    },
+    {
+      "matchDepTypes": [
+        "require-dev"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "groupName": "php dev (minor)",
+      "groupSlug": "php-dev-minor-",
+      "prPriority": -1
+    },
+    {
+      "matchPackagePatterns": [
+        "^codeception"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "groupName": "codeception dev (minor)",
+      "additionalBranchPrefix": "codeception-dev-minor-",
+      "prPriority": -1
+    },
+    {
+      "matchPackagePrefixes": "wpackagist-plugin",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchDepTypes": [
+        "require-dev"
+      ],
+      "additionalBranchPrefix": "plugins-dev-major-",
+      "prPriority": 0,
+      "semanticCommitType": "wp",
+      "semanticCommitScope": "plugins"
+    },
+    {
+      "matchPackagePrefixes": "wpackagist-plugin",
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "matchDepTypes": [
+        "require-dev"
+      ],
+      "additionalBranchPrefix": "plugins-dev-minor-",
+      "prPriority": 1,
+      "semanticCommitType": "wp",
+      "semanticCommitScope": "plugins"
+    },
+    {
+      "matchManagers": [
+        "nvm"
+      ],
+      "matchPackageNames": [
+        "node"
+      ],
+      "matchDepTypes": [
+        "dependencies",
+        "engines"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackagePatterns": [
+        "/node$"
+      ],
+      "excludePackageNames": [
+        "calico/node",
+        "kindest/node"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "groupName": "node (minor)",
+      "groupSlug": "node-minor-"
+    },
+    {
+      "matchManagers": [
+        "nvm"
+      ],
+      "matchPackageNames": [
+        "node"
+      ],
+      "matchDepTypes": [
+        "dependencies",
+        "engines"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackagePatterns": [
+        "/node$"
+      ],
+      "excludePackageNames": [
+        "calico/node",
+        "kindest/node"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "groupName": "node (major)",
+      "groupSlug": "node-major-"
+    },
+    {
+      "matchManagers": [
+        "circleci"
+      ],
+      "groupName": "circleci"
+    }
+  ]
+}
