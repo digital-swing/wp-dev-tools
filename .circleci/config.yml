@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  browser-tools: circleci/browser-tools@1.1.3
+  browser-tools: circleci/browser-tools@1.4.0
   slack: circleci/slack@4.1
   # lighthouse-check: foo-software/lighthouse-check@0.0.13
 
@@ -31,7 +31,7 @@ parameters:
 executors:
   base:
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:8.1"
 commands:
   checkout:
     description: Clone bedrock-trellis-ds and require current package branch
@@ -425,13 +425,13 @@ commands:
 jobs:
   build_php:
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:8.1"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
           MYSQL_ROOT_PASSWORD: password
           MYSQL_USER: wordpress
-        image: "circleci/mariadb:10.5.10-focal-ram"
+        image: "circleci/mariadb:10.7.1-focal-ram"
         name: mysql
     working_directory: /tmp
     steps:
@@ -467,13 +467,13 @@ jobs:
         description: Environment variable that contains a CircleCI API token
         type: env_var_name
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:8.1"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
           MYSQL_ROOT_PASSWORD: password
           MYSQL_USER: wordpress
-        image: "circleci/mariadb:10.5.10-focal-ram"
+        image: "circleci/mariadb:10.7.1-focal-ram"
         name: mysql
     working_directory: /tmp
     steps:
@@ -645,13 +645,13 @@ jobs:
       Run codeception tests for end-to-end testing on a WordPress site.
       Codeception supports unit, wpunit, functional, and acceptance testing.
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:8.1"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
           MYSQL_ROOT_PASSWORD: password
           MYSQL_USER: wordpress
-        image: "circleci/mariadb:10.5.10-focal-ram"
+        image: "circleci/mariadb:10.7.1-focal-ram"
         name: mysql
 
       # ne fonctionne pas car selenium ne parvient pas à se connecter à l'image principale et doit donc être lancé depuis la meme image
@@ -808,14 +808,14 @@ jobs:
   backstopjs:
     description: Run visual regression tests using backstopjs
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:8.1"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
           MYSQL_ROOT_PASSWORD: password
           MYSQL_USER: wordpress
         # image: "circleci/mysql:5"
-        image: "circleci/mariadb:10.5.10-focal-ram"
+        image: "circleci/mariadb:10.7.1-focal-ram"
         name: mysql
     working_directory: /tmp
     parameters:
