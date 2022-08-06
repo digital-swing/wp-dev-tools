@@ -30,7 +30,7 @@
         "php-parallel-lint/php-console-highlighter": "0.5",
         "automattic/phpcs-neutron-ruleset": "3.4.0",
         "phpstan/extension-installer": "1.1.0",
-        "phpstan/phpstan": "^1.8",
+        "phpstan/phpstan": "1.8.2",
         "ericmartel/codeception-email-mailhog": "1.0.8",
         "lucatume/wp-browser": "3.0.17",
         "php-stubs/wordpress-globals": "0.2.0",
