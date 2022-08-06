@@ -31,7 +31,7 @@ parameters:
 executors:
   base:
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:7.4-0.0.16"
 commands:
   add_key_to_known_hosts:
     description: Adds SSH key to known_hosts (if it matches a fingerprint)
@@ -87,7 +87,7 @@ commands:
     steps:
       - run:
           command: |
-            git clone -b develop git@github.com:digital-swing/bedrock-trellis-ds.git project
+            git clone -b php7.4 git@github.com:digital-swing/bedrock-trellis-ds.git project
   require_current_version:
     description: Require current package branch
     steps:
@@ -467,7 +467,7 @@ commands:
 jobs:
   build_php:
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:7.4-0.0.16"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
@@ -511,7 +511,7 @@ jobs:
         description: Environment variable that contains a CircleCI API token
         type: env_var_name
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:7.4-0.0.16"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
@@ -691,7 +691,7 @@ jobs:
       Run codeception tests for end-to-end testing on a WordPress site.
       Codeception supports unit, wpunit, functional, and acceptance testing.
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:7.4-0.0.16"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
@@ -855,7 +855,7 @@ jobs:
   backstopjs:
     description: Run visual regression tests using backstopjs
     docker:
-      - image: "digitalswing/php-ansible:8.0"
+      - image: "digitalswing/php-ansible:7.4-0.0.16"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
