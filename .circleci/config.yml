@@ -83,18 +83,23 @@ commands:
           key_type: ed25519
           fingerprint: "SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU"
   checkout:
-    description: Clone bedrock-trellis-ds and require current package branch
+    description: Clone bedrock-trellis-ds
     steps:
       - run:
           command: |
             git clone -b develop git@github.com:digital-swing/bedrock-trellis-ds.git project
-            cd project/public_html
+  require_current_version:
+    description: Require current package branch
+    steps:
+      - run:
+          command: |
             if [ "$CIRCLE_BRANCH" == "main" ]; then
                 BRANCH="main"
             else
                 BRANCH="$CIRCLE_BRANCH"
             fi
             composer require digital-swing/wp-dev-tools:dev-$CIRCLE_BRANCH
+          working_directory: project/public_html
   prepare_ansible:
     description: Load API keys and passwords into required files
     steps:
@@ -496,6 +501,7 @@ jobs:
       - provision_server:
           tags: wordpress-setup,vendor-tokens,dotenv,belt
           skip_tags: wordpress-setup-database,wordpress-setup-self-signed-certificate,wordpress-setup-nginx-client-cert
+      - require_current_version
       - install_php_dependencies:
           cache-name: public_html
           base-dir: "project/public_html"
