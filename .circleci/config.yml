@@ -100,6 +100,7 @@ commands:
             fi
             composer require digital-swing/wp-dev-tools:dev-$CIRCLE_BRANCH
           working_directory: project/public_html
+          name: Require current package branch
   prepare_ansible:
     description: Load API keys and passwords into required files
     steps:
@@ -182,26 +183,7 @@ commands:
       - run:
           command: |
             # shellcheck disable=SC2050
-            if [[ "undefined" == "<< parameters.environment >>" ]]; then
-                WP_ENV="$CIRCLE_BRANCH"
-            else
-                WP_ENV="<< parameters.environment >>"
-            fi
-
-            case "$WP_ENV" in
-                master)
-                    WP_INSTALL="production";;
-                production)
-                    WP_INSTALL="production";;
-                main)
-                    WP_INSTALL="production";;
-                staging)
-                    WP_INSTALL="staging";;
-                develop)
-                    WP_INSTALL="develop";;
-                *)
-                    WP_INSTALL="<< pipeline.parameters.default_environment >>";;
-            esac
+            WP_INSTALL="develop"
 
             echo "export WP_INSTALL=$WP_INSTALL
             export ENV=`echo $WP_INSTALL`" >> "$BASH_ENV"
@@ -332,6 +314,7 @@ commands:
       - run:
           command: ansible-playbook ci-provision.yml --tags=<< parameters.tags >> --skip-tags=<< parameters.skip_tags >> -e '{"env":"<< parameters.site-env>>","install_wp":<< parameters.install_wp>>}' -vvv
           working_directory: /tmp/project/trellis
+          name: Provision server
   set_bin_default_path:
     steps:
       - run:
