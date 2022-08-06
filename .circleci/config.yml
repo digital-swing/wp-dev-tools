@@ -33,14 +33,14 @@ executors:
     docker:
       - image: "digitalswing/php-ansible:8.0"
 commands:
-  # checkout:
-  #   description: Clone bedrock-trellis-ds and require current package branch
-  #   steps:
-  #     - run:
-  #         command: |
-  #           git clone -b "develop" "https://github.com/digital-swing/bedrock-trellis-ds" project
-  #           cd project
-  #           composer require digital-swing/wp-dev-tools:dev-$CIRCLE_BRANCH
+  checkout:
+    description: Clone bedrock-trellis-ds and require current package branch
+    steps:
+      - run:
+          command: |
+            git clone -b develop git@github.com:digital-swing/bedrock-trellis-ds.git project
+            cd project
+            composer require digital-swing/wp-dev-tools:dev-$CIRCLE_BRANCH
   prepare_ansible:
     description: Load API keys and passwords into required files
     steps:
@@ -433,7 +433,7 @@ jobs:
           MYSQL_USER: wordpress
         image: "circleci/mariadb:10.5.10-focal-ram"
         name: mysql
-    # working_directory: /tmp
+    working_directory: /tmp
     steps:
       - checkout
       - prepare_ansible
