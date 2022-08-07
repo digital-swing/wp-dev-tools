@@ -69,8 +69,7 @@
         "patch",
         "minor"
       ],
-      "groupName": "php (minor)",
-      "groupSlug": "php-minor-",
+      "additionalBranchPrefix": "php-minor-",
       "prPriority": 3
     },
     {
@@ -107,20 +106,7 @@
         "patch",
         "minor"
       ],
-      "groupName": "php dev (minor)",
-      "groupSlug": "php-dev-minor-",
-      "prPriority": -1
-    },
-    {
-      "matchPackagePatterns": [
-        "^codeception"
-      ],
-      "matchUpdateTypes": [
-        "patch",
-        "minor"
-      ],
-      "groupName": "codeception dev (minor)",
-      "additionalBranchPrefix": "codeception-dev-minor-",
+      "additionalBranchPrefix": "php-dev-minor-",
       "prPriority": -1
     },
     {
@@ -152,64 +138,9 @@
     },
     {
       "matchManagers": [
-        "nvm"
-      ],
-      "matchPackageNames": [
-        "node"
-      ],
-      "matchDepTypes": [
-        "dependencies",
-        "engines"
-      ],
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackagePatterns": [
-        "/node$"
-      ],
-      "excludePackageNames": [
-        "calico/node",
-        "kindest/node"
-      ],
-      "matchUpdateTypes": [
-        "patch",
-        "minor"
-      ],
-      "groupName": "node (minor)",
-      "groupSlug": "node-minor-"
-    },
-    {
-      "matchManagers": [
-        "nvm"
-      ],
-      "matchPackageNames": [
-        "node"
-      ],
-      "matchDepTypes": [
-        "dependencies",
-        "engines"
-      ],
-      "matchDatasources": [
-        "docker"
-      ],
-      "matchPackagePatterns": [
-        "/node$"
-      ],
-      "excludePackageNames": [
-        "calico/node",
-        "kindest/node"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "groupName": "node (major)",
-      "groupSlug": "node-major-"
-    },
-    {
-      "matchManagers": [
         "circleci"
       ],
-      "groupName": "circleci"
+      "additionalBranchPrefix": "circleci"
     }
   ]
 }
