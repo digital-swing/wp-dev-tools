@@ -98,7 +98,7 @@ commands:
             else
                 BRANCH="$CIRCLE_BRANCH"
             fi
-            composer require --dev digital-swing/wp-dev-tools:dev-$CIRCLE_BRANCH
+            composer require --dev digital-swing/wp-dev-tools:dev-$CIRCLE_BRANCH -W
           working_directory: project/public_html
           name: Require current package branch
   prepare_ansible:
