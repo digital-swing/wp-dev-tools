@@ -34,7 +34,8 @@
         "lucatume/wp-browser": "3.0.17",
         "php-stubs/wordpress-globals": "0.2.0",
         "wp-cli/wp-cli-bundle": "2.6.0",
-        "cweagans/composer-patches": "1.7.2"
+        "cweagans/composer-patches": "1.7.2",
+        "paulthewalton/acf-stubs": "^5.8"
     },
     "config": {
         "optimize-autoloader": true,
