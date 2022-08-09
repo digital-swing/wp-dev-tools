@@ -42,7 +42,12 @@
         "preferred-install": "dist",
         "github-oauth": {},
         "secure-http": false,
-        "allow-plugins": {}
+        "allow-plugins": {
+            "cweagans/composer-patches": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpro/grumphp": true,
+            "phpstan/extension-installer": true
+        }
     },
     "prefer-stable": true,
     "extra": {
