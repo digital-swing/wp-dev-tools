@@ -960,15 +960,6 @@ jobs:
       - slack/notify:
           event: pass
           template: success_tagged_deploy_1
-  # lighthouse:
-  #   executor: lighthouse-check/default
-  #   parameters:
-  #     urls: localhost
-  #   steps:
-  #     - lighthouse-check/audit:
-  #         prCommentAccessToken: $LIGHTHOUSE_CHECK_GITHUB_ACCESS_TOKEN
-  #         prCommentUrl: https://api.github.com/repos/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/pulls/${CIRCLE_PULL_REQUEST}/reviews
-  #         urls: << parameters.urls >>
 workflows:
   build_test_deploy:
     jobs:
@@ -997,28 +988,4 @@ workflows:
                 - main
                 - develop
                 - /.*php-.*/
-                - /.*npm-[^dev].*/
-                - /.*plugins-[^dev].*/
-                - /.*themes-.*/
-                - /.*wordpress.*/
                 - /.*codeception.*/
-      - backstopjs:
-          pipeline_id: << pipeline.id >>
-          context:
-            - TOKENS
-            - slack-secrets
-          requires:
-            - build_php
-            - build_js
-          filters:
-            branches:
-              only:
-                - staging
-                - master
-                - main
-                - /.*(php|npm)-major.*/
-                - /.*plugins-[^dev].*/
-                - /.*themes-.*/
-                - /.*wordpress.*/
-                - /.*backstopjs.*/
-                - /.*puppeteer.*/
