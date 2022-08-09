@@ -1,8 +1,7 @@
 {
   "enabled": true,
   "baseBranches": [
-    "main",
-    "php7.4"
+    "main"
   ],
   "extends": [
     "config:base",
