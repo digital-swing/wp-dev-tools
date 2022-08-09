@@ -87,7 +87,7 @@ commands:
     steps:
       - run:
           command: |
-            git clone -b develop git@github.com:digital-swing/bedrock-trellis-ds.git project
+            git clone -b php7.4 git@github.com:digital-swing/bedrock-trellis-ds.git project
   require_current_version:
     description: Require current package branch
     steps:
