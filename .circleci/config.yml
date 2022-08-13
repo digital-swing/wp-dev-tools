@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  browser-tools: circleci/browser-tools@1.1.3
+  browser-tools: circleci/browser-tools@1.4.0
   slack: circleci/slack@4.1
   # lighthouse-check: foo-software/lighthouse-check@0.0.13
 
