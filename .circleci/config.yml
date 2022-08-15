@@ -473,7 +473,7 @@ jobs:
           MYSQL_PASSWORD: wordpress
           MYSQL_ROOT_PASSWORD: password
           MYSQL_USER: wordpress
-        image: "cimg/mariadb:10.8.3"
+        image: "cimg/mariadb:10.10.1"
         name: mysql
     working_directory: /tmp
     steps:
@@ -517,7 +517,7 @@ jobs:
           MYSQL_PASSWORD: wordpress
           MYSQL_ROOT_PASSWORD: password
           MYSQL_USER: wordpress
-        image: "cimg/mariadb:10.8.3"
+        image: "cimg/mariadb:10.10.1"
         name: mysql
     working_directory: /tmp
     steps:
@@ -697,7 +697,7 @@ jobs:
           MYSQL_PASSWORD: wordpress
           MYSQL_ROOT_PASSWORD: password
           MYSQL_USER: wordpress
-        image: "cimg/mariadb:10.8.3"
+        image: "cimg/mariadb:10.10.1"
         name: mysql
 
       # ne fonctionne pas car selenium ne parvient pas à se connecter à l'image principale et doit donc être lancé depuis la meme image
@@ -862,7 +862,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_USER: wordpress
         # image: "circleci/mysql:5"
-        image: "cimg/mariadb:10.8.3"
+        image: "cimg/mariadb:10.10.1"
         name: mysql
     working_directory: /tmp
     parameters:
