@@ -110,6 +110,15 @@ commands:
           name: Require current package branch
   get_php_version:
     description: Extract php version from repo
+    parameters:
+      repo:
+        description: "The repo to clone"
+        type: string
+        default: "bedrock-trellis-ds"
+      branch:
+        description: "Git branch to clone"
+        type: string
+        default: "develop"
     steps:
       - run: |
           curl --header "Authorization: token ${GH_BOT_PAT}" \
@@ -579,6 +588,8 @@ workflows:
             parameters:
               repo: ["bedrock-trellis-ds"]
               branch: ["develop", "7.4"]
+          pre-steps:
+            - get_php_version
       - build_js:
           context:
             - TOKENS
