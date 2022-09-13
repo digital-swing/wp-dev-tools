@@ -228,6 +228,30 @@ jobs:
     working_directory: /tmp
     steps:
       - add_github_key_to_known_hosts
+      - checkout
+      - prepare_ansible
+      - find_wp_install
+      - provision_server:
+          tags: wordpress-setup,vendor-tokens,dotenv,belt
+          skip_tags: wordpress-setup-database,wordpress-setup-self-signed-certificate,wordpress-setup-nginx-client-cert
+      - require_current_version
+      - php/install-packages:
+          app-dir: "project/public_html"
+      - php/install-packages:
+          app-dir: "project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>"
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - project/public_html/.env
+            - project/public_html/auth.json
+            - project/public_html/vendor
+            - project/public_html/web/wp
+            - project/public_html/web/app/plugins
+            - project/public_html/web/app/mu-plugins
+            - project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>/vendor
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
   build_js:
     parameters:
       php-version:
