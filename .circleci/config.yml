@@ -26,11 +26,17 @@ workflows:
   tests:
     jobs:
       - setup:
+          context:
+            - TOKENS
+            - slack-secrets
           matrix:
             parameters:
               repo: ["bedrock-trellis-ds"]
               branch: ["php7.4", "develop"]
       - setup:
+          context:
+            - TOKENS
+            - slack-secrets
           matrix:
             parameters:
               repo: ["emergences"]
