@@ -82,6 +82,15 @@ commands:
           fingerprint: "SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU"
   checkout:
     description: Clone << parameters.repo >>
+    parameters:
+      repo:
+        description: "The repo to clone"
+        type: string
+        default: "bedrock-trellis-ds"
+      branch:
+        description: "Git branch to clone"
+        type: string
+        default: "develop"
     steps:
       - run:
           command: |
@@ -190,6 +199,14 @@ jobs:
       php-version:
         type: env_var_name
         default: PHP_VERSION
+      repo:
+        description: "The repo to clone"
+        type: string
+        default: "bedrock-trellis-ds"
+      branch:
+        description: "Git branch to clone"
+        type: string
+        default: "develop"
     docker:
       - image: "digitalswing/php-ansible:<< parameters.php-version >>"
       - environment:
@@ -202,30 +219,6 @@ jobs:
     working_directory: /tmp
     steps:
       - add_github_key_to_known_hosts
-      - checkout
-      - prepare_ansible
-      - find_wp_install
-      - provision_server:
-          tags: wordpress-setup,vendor-tokens,dotenv,belt
-          skip_tags: wordpress-setup-database,wordpress-setup-self-signed-certificate,wordpress-setup-nginx-client-cert
-      - require_current_version
-      - php/install-packages:
-          app-dir: "project/public_html"
-      - php/install-packages:
-          app-dir: "project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>"
-      - persist_to_workspace:
-          root: /tmp
-          paths:
-            - project/public_html/.env
-            - project/public_html/auth.json
-            - project/public_html/vendor
-            - project/public_html/web/wp
-            - project/public_html/web/app/plugins
-            - project/public_html/web/app/mu-plugins
-            - project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>/vendor
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
   build_js:
     parameters:
       php-version:
@@ -235,6 +228,14 @@ jobs:
         default: CIRCLE_TOKEN
         description: Environment variable that contains a CircleCI API token
         type: env_var_name
+      repo:
+        description: "The repo to clone"
+        type: string
+        default: "bedrock-trellis-ds"
+      branch:
+        description: "Git branch to clone"
+        type: string
+        default: "develop"
     docker:
       - image: "digitalswing/php-ansible:<< parameters.php-version >>"
       - environment:
@@ -247,7 +248,9 @@ jobs:
     working_directory: /tmp
     steps:
       - add_github_key_to_known_hosts
-      - checkout
+      - checkout:
+          repo: << parameters.repo >>
+          branch: << parameters.branch >>
       - prepare_ansible
       - attach_workspace:
           at: /tmp
@@ -410,6 +413,14 @@ jobs:
       php-version:
         type: env_var_name
         default: PHP_VERSION
+      repo:
+        description: "The repo to clone"
+        type: string
+        default: "bedrock-trellis-ds"
+      branch:
+        description: "Git branch to clone"
+        type: string
+        default: "develop"
       package_name:
         default: << pipeline.parameters.site-name >>
         description: Name of the plugin or theme (directory name)
@@ -424,7 +435,9 @@ jobs:
         type: enum
     steps:
       - add_github_key_to_known_hosts
-      - checkout
+      - checkout:
+          repo: << parameters.repo >>
+          branch: << parameters.branch >>
       - browser-tools/install-chrome:
           chrome-version: "90.0.4430.212"
       - browser-tools/install-chromedriver
@@ -571,7 +584,7 @@ workflows:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-<< matrix.repo >>-<< matrix.branch >>
+            - build_php-<< matrix.branch >>-<< matrix.repo >>
           matrix:
             parameters:
               repo: ["bedrock-trellis-ds"]
@@ -581,8 +594,8 @@ workflows:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-<< matrix.repo >>-<< matrix.branch >>
-            - build_js-<< matrix.repo >>-<< matrix.branch >>
+            - build_php-<< matrix.branch >>-<< matrix.repo >>
+            - build_js-<< matrix.branch >>-<< matrix.repo >>
           filters:
             branches:
               only:
