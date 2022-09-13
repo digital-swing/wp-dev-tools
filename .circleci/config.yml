@@ -206,8 +206,8 @@ jobs:
   build_php:
     parameters:
       php-version:
-        type: env_var_name
-        default: PHP_VERSION
+        type: string
+        default: "8.0"
       repo:
         description: "The repo to clone"
         type: string
@@ -231,8 +231,8 @@ jobs:
   build_js:
     parameters:
       php-version:
-        type: env_var_name
-        default: PHP_VERSION
+        type: string
+        default: "8.0"
       circle_token:
         default: CIRCLE_TOKEN
         description: Environment variable that contains a CircleCI API token
@@ -420,8 +420,8 @@ jobs:
     working_directory: /tmp
     parameters:
       php-version:
-        type: env_var_name
-        default: PHP_VERSION
+        type: string
+        default: "8.0"
       repo:
         description: "The repo to clone"
         type: string
