@@ -22,10 +22,10 @@ jobs:
             --location https://raw.githubusercontent.com/digital-swing/<< parameters.repo >>/<< parameters.branch >>/trellis/group_vars/all/main.yml
           echo "export PHP_VERSION=\"$(cat /tmp/main.yml | grep php_version | cut -d'"' -f 2)\"" >> $BASH_ENV
       - run: |
-          echo '{ \"repo\" : \"<< parameters.repo >>\" , \"branch\" : \"<< parameters.branch >>\" , \"php-version\" : \"${PHP_VERSION}" }'
+          echo "{ \"repo\" : \"<< parameters.repo >>\" , \"branch\" : \"<< parameters.branch >>\" , \"php-version\" : \"${PHP_VERSION}\" }"
       - continuation/continue:
           configuration_path: .circleci/continue-config.yml
-          parameters: '{ \"repo\" : \"<< parameters.repo >>\" , \"branch\" : \"<< parameters.branch >>\" , \"php-version\" : \"${PHP_VERSION}" }'
+          parameters: '{ "repo" : "<< parameters.repo >>" , "branch" : "<< parameters.branch >>" , "php-version" : "${PHP_VERSION}" }'
 
 workflows:
   tests:
