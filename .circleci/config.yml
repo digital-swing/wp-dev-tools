@@ -605,6 +605,9 @@ workflows:
   build_test_deploy:
     jobs:
       - build_php:
+          pre-steps:
+            - get_php_version
+          php-version: ${PHP_VERSION}
           context:
             - TOKENS
             - slack-secrets
@@ -612,9 +615,10 @@ workflows:
             parameters:
               repo: ["bedrock-trellis-ds"]
               branch: ["develop", "7.4"]
+      - build_js:
           pre-steps:
             - get_php_version
-      - build_js:
+          php-version: ${PHP_VERSION}
           context:
             - TOKENS
             - slack-secrets
@@ -625,6 +629,9 @@ workflows:
               repo: ["bedrock-trellis-ds"]
               branch: ["develop", "7.4"]
       - codeception:
+          pre-steps:
+            - get_php_version
+          php-version: ${PHP_VERSION}
           context:
             - TOKENS
             - slack-secrets
