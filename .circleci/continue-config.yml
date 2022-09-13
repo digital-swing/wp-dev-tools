@@ -27,20 +27,11 @@ parameters:
   production_flag:
     type: string
     default: ":production" # TODO  build production flag, usually " --production" or ":production"
-  repo:
-    type: string
-    default: "bedrock-trellis-ds"
-  branch:
-    type: string
-    default: "develop"
-  php-version:
-    type: string
-    default: "8.0"
 
 executors:
   base:
     docker:
-      - image: "digitalswing/php-ansible:<< pipeline.parameters.php-version >>"
+      - image: "digitalswing/php-ansible:##php-version##"
 commands:
   add_key_to_known_hosts:
     description: Adds SSH key to known_hosts (if it matches a fingerprint)
@@ -92,11 +83,11 @@ commands:
           key_type: ed25519
           fingerprint: "SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU"
   checkout:
-    description: Clone << pipeline.parameters.repo >>
+    description: Clone ##repo##
     steps:
       - run:
           command: |
-            git clone -b << pipeline.parameters.branch >> git@github.com:digital-swing/<< pipeline.parameters.repo >>.git project
+            git clone -b ##branch## git@github.com:digital-swing/##repo##.git project
   require_current_version:
     description: Require current package branch
     steps:
@@ -476,7 +467,7 @@ commands:
 jobs:
   build_php:
     docker:
-      - image: "digitalswing/php-ansible:<< pipeline.parameters.php-version >>"
+      - image: "digitalswing/php-ansible:##php-version##"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
@@ -518,7 +509,7 @@ jobs:
         description: Environment variable that contains a CircleCI API token
         type: env_var_name
     docker:
-      - image: "digitalswing/php-ansible:<< pipeline.parameters.php-version >>"
+      - image: "digitalswing/php-ansible:##php-version##"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
@@ -698,7 +689,7 @@ jobs:
       Run codeception tests for end-to-end testing on a WordPress site.
       Codeception supports unit, wpunit, functional, and acceptance testing.
     docker:
-      - image: "digitalswing/php-ansible:<< pipeline.parameters.php-version >>"
+      - image: "digitalswing/php-ansible:##php-version##"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
@@ -862,7 +853,7 @@ jobs:
   backstopjs:
     description: Run visual regression tests using backstopjs
     docker:
-      - image: "digitalswing/php-ansible:<< pipeline.parameters.php-version >>"
+      - image: "digitalswing/php-ansible:##php-version##"
       - environment:
           MYSQL_DATABASE: wordpress
           MYSQL_PASSWORD: wordpress
