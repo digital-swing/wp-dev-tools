@@ -8,11 +8,6 @@
     "schedule:nonOfficeHours",
     ":semanticCommitTypeAll(chore)"
   ],
-  "circleci": {
-    "fileMatch": [
-      "(^|/)\\.circleci\/continue-config\\.yml$"
-    ]
-  },
   "automerge": true,
   "separateMultipleMajor": true,
   "timezone": "Europe/Paris",
