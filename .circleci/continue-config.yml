@@ -29,10 +29,13 @@ parameters:
     default: ":production" # TODO  build production flag, usually " --production" or ":production"
   repo:
     type: string
+    default: "bedrock-trellis-ds"
   branch:
     type: string
+    default: "develop"
   php-version:
     type: string
+    default: "8.0"
 
 executors:
   base:
