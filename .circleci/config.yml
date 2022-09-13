@@ -18,7 +18,7 @@ jobs:
       - run:
           name: Generate config
           command: |
-            ./generate-config ${GH_BOT_PAT} << parameters.repo >> << parameters.branch >>
+            .circleci/generate-config.sh ${GH_BOT_PAT} << parameters.repo >> << parameters.branch >>
       - continuation/continue:
           configuration_path: .circleci/continue-config.yml
 
