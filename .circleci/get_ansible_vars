@@ -2,10 +2,10 @@
 set -o pipefail
 
 declare -A ansible_vars
-ansible_vars[SITE_NAME]="ansible develop -i hosts/develop -m shell -c local -a \"echo {{ (wordpress_sites | first) }}\" | tail -1 | sed -r \"s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g\""
-ansible_vars[THEME_NAME]="ansible develop -i hosts/develop -m shell -c local -a \"echo {{ theme }}\" | tail -1 | sed -r \"s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g\""
-ansible_vars[PUBLIC_DIR]="ansible develop -i hosts/develop -m shell -c local -a \"echo {{ theme_dist_folder }}\" | tail -1 | sed -r \"s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g\""
-ansible_vars[PRODUCTION_FLAG]="ansible develop -i hosts/develop -m shell -c local -e item=\"{{ (wordpress_sites | dict2items | first ) }}\" -a \"echo {{ (npm_build_folders | first).production_flag }}\" | tail -1 | sed -r \"s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g\""
+ansible_vars[SITE_NAME]="ANSIBLE_FORCE_COLOR=false  ANSIBLE_NOCOLOR=true ansible develop -i hosts/develop -m shell -c local -a \"echo {{ (wordpress_sites | first) }}\" | tail -1"
+ansible_vars[THEME_NAME]="ANSIBLE_FORCE_COLOR=false  ANSIBLE_NOCOLOR=true ansible develop -i hosts/develop -m shell -c local -a \"echo {{ theme }}\" | tail -1"
+ansible_vars[PUBLIC_DIR]="ANSIBLE_FORCE_COLOR=false  ANSIBLE_NOCOLOR=true ansible develop -i hosts/develop -m shell -c local -a \"echo {{ theme_dist_folder }}\" | tail -1"
+ansible_vars[PRODUCTION_FLAG]="ANSIBLE_FORCE_COLOR=false  ANSIBLE_NOCOLOR=true ansible develop -i hosts/develop -m shell -c local -e item=\"{{ (wordpress_sites | dict2items | first ) }}\" -a \"echo {{ (npm_build_folders | first).production_flag }}\" | tail -1"
 
 for key in "${!ansible_vars[@]}"
     do echo "export ${key}=\"$(eval "${ansible_vars[$key]}")\"" >> "$BASH_ENV"
