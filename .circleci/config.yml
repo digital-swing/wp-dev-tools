@@ -240,7 +240,7 @@ jobs:
       - php/install-packages:
           app-dir: "project/public_html"
       - php/install-packages:
-          app-dir: "project/public_html/web/app/themes/${theme-name}"
+          app-dir: "project/public_html/web/app/themes/${THEME_NAME}"
       - persist_to_workspace:
           root: /tmp
           paths:
@@ -250,7 +250,7 @@ jobs:
             - project/public_html/web/wp
             - project/public_html/web/app/plugins
             - project/public_html/web/app/mu-plugins
-            - project/public_html/web/app/themes/${theme-name}/vendor
+            - project/public_html/web/app/themes/${THEME_NAME}/vendor
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -287,13 +287,13 @@ jobs:
       - node/install
       - node/install-packages:
           pkg-manager: yarn
-          app-dir: "project/public_html/web/app/themes/${theme-name}"
+          app-dir: "project/public_html/web/app/themes/${THEME_NAME}"
           include-branch-in-cache-key: false
       - run:
           command: |
             if [[ "${ENV}" == "staging" ]] || [[ "${ENV}" == "production" ]] ; then
               ansible-playbook ci-provision.yml --tags=wordpress,wp-cli --skip-tags=wordpress-install-directories -e '{"env":"ci","install_wp":false}' -vvv            
-              ansible-playbook pull.yml -i hosts/ci -i hosts/${ENV} -e site=${site-name} -e env=${ENV} --tags=database -vvv
+              ansible-playbook pull.yml -i hosts/ci -i hosts/${ENV} -e site=${SITE_NAME} -e env=${ENV} --tags=database -vvv
             fi
           name: Provision wordpress
           working_directory: /tmp/project/trellis
@@ -303,22 +303,22 @@ jobs:
             [ -s "$HOME/.nvm/bash_completion" ] && \. "$HOME/.nvm/bash_completion"
             nvm install
             if [[ "${ENV}" == "staging" ]] || [[ "${ENV}" == "production" ]] ; then
-                yarn build${production_flag}
+                yarn build${PRODUCTION_FLAG}
             else
                 yarn build
             fi
           name: Build theme assets
-          working_directory: project/public_html/web/app/themes/${theme-name}
+          working_directory: project/public_html/web/app/themes/${THEME_NAME}
       - save_cache:
           paths:
-            - project/public_html/web/app/themes/${theme-name}/${src-dir}
+            - project/public_html/web/app/themes/${THEME_NAME}/${PUBLIC_DIR}
           key: assets-{{ .Branch }}-{{ checksum "/tmp/assets_version" }}
       - persist_to_workspace:
           root: /tmp
           paths:
-            - project/public_html/web/app/themes/${theme-name}/${src-dir}
+            - project/public_html/web/app/themes/${THEME_NAME}/${PUBLIC_DIR}
       - store_artifacts:
-          path: /tmp/project/public_html/web/app/themes/${theme-name}/${src-dir}/report.html
+          path: /tmp/project/public_html/web/app/themes/${THEME_NAME}/${PUBLIC_DIR}/report.html
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -338,7 +338,7 @@ jobs:
         type: string
         default: "develop"
       package_name:
-        default: ${site-name}
+        default: ${SITE_NAME}
         description: Name of the plugin or theme (directory name)
         type: string
       package_type:
@@ -410,7 +410,7 @@ jobs:
       #     keys:
       #       - "installwpbrowser-v5"
       # - run:
-      #     command: ansible-playbook codeception-install.yml -e "env=ci site=${site-name}" -vvv
+      #     command: ansible-playbook codeception-install.yml -e "env=ci site=${SITE_NAME}" -vvv
       #     working_directory: project/trellis
 
       - prepare_ansible
