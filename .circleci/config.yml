@@ -241,6 +241,7 @@ jobs:
           app-dir: "project/public_html"
       - php/install-packages:
           app-dir: project/public_html/web/app/themes/$THEME_NAME
+          with-cache: false
       - persist_to_workspace:
           root: /tmp
           paths:
@@ -290,6 +291,7 @@ jobs:
           app-dir: |
             "project/public_html/web/app/themes/${THEME_NAME}"
           include-branch-in-cache-key: false
+          with-cache: false
       - run:
           command: |
             if [[ "${ENV}" == "staging" ]] || [[ "${ENV}" == "production" ]] ; then
