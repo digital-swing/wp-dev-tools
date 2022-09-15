@@ -6,26 +6,6 @@ orbs:
   php: circleci/php@1.1.0
   node: circleci/node@5.0.2
 
-parameters:
-  site-name:
-    type: string
-    default: "bedrock-develop" # TODO same identifier as in wordpress_sites.yml
-  theme-name:
-    type: string
-    default: "ds-custom" # TODO theme folder name
-  theme-path:
-    type: string
-    default: "public_html/web/app/themes"
-  rebuild-assets:
-    type: boolean
-    default: false
-  src-dir:
-    type: string
-    default: public # TODO theme build folder
-  production_flag:
-    type: string
-    default: ":production" # TODO  build production flag, usually " --production" or ":production"
-
 images:
   php-ansible: &php-ansible
     image: "digitalswing/php-ansible:7.4"
@@ -52,7 +32,6 @@ executors:
 commands:
   add_key_to_known_hosts:
     description: Adds SSH key to known_hosts (if it matches a fingerprint)
-
     parameters:
       domain:
         type: string
@@ -170,6 +149,13 @@ commands:
           paths:
             - /tmp/project/trellis/vendor
             - /home/circleci/.cache
+  get_ansible_vars:
+    description: Get vars from ansible config and store them to $BASH_ENV
+    steps:
+      - run:
+          command: |
+            .circleci/get_ansible_vars
+          name: Set up the WP install name
   find_wp_install:
     description: Set up our WP_ENV based on the environment
     parameters:
@@ -238,7 +224,10 @@ jobs:
     executor: base_db
     steps:
       - add_github_key_to_known_hosts
-      - checkout
+      - checkout:
+          repo: << parameters.repo >>
+          branch: << parameters.branch >>
+      - get_ansible_vars
       - prepare_ansible
       - find_wp_install
       - provision_server:
@@ -248,7 +237,7 @@ jobs:
       - php/install-packages:
           app-dir: "project/public_html"
       - php/install-packages:
-          app-dir: "project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>"
+          app-dir: "project/public_html/web/app/themes/${theme-name}"
       - persist_to_workspace:
           root: /tmp
           paths:
@@ -258,7 +247,7 @@ jobs:
             - project/public_html/web/wp
             - project/public_html/web/app/plugins
             - project/public_html/web/app/mu-plugins
-            - project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>/vendor
+            - project/public_html/web/app/themes/${theme-name}/vendor
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -285,6 +274,7 @@ jobs:
       - checkout:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
+      - get_ansible_vars
       - prepare_ansible
       - attach_workspace:
           at: /tmp
@@ -294,7 +284,7 @@ jobs:
       - node/install
       - node/install-packages:
           pkg-manager: yarn
-          app-dir: "project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>"
+          app-dir: "project/public_html/web/app/themes/${theme-name}"
           include-branch-in-cache-key: false
       - run:
           command: |
@@ -337,7 +327,7 @@ jobs:
                 command: |
                   if [[ "${ENV}" == "staging" ]] || [[ "${ENV}" == "production" ]] ; then
                     ansible-playbook ci-provision.yml --tags=wordpress,wp-cli --skip-tags=wordpress-install-directories -e '{"env":"ci","install_wp":false}' -vvv            
-                    ansible-playbook pull.yml -i hosts/ci -i hosts/${ENV} -e site=<< pipeline.parameters.site-name >> -e env=${ENV} --tags=database -vvv
+                    ansible-playbook pull.yml -i hosts/ci -i hosts/${ENV} -e site=${site-name} -e env=${ENV} --tags=database -vvv
                   fi
                 name: Provision wordpress
                 working_directory: /tmp/project/trellis
@@ -347,12 +337,12 @@ jobs:
                   [ -s "$HOME/.nvm/bash_completion" ] && \. "$HOME/.nvm/bash_completion"
                   nvm install
                   if [[ "${ENV}" == "staging" ]] || [[ "${ENV}" == "production" ]] ; then
-                      yarn build<< pipeline.parameters.production_flag >>
+                      yarn build${production_flag}
                   else
                       yarn build
                   fi
                 name: Build theme assets if the source files changed or if branch is staging|main|master
-                working_directory: project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>
+                working_directory: project/public_html/web/app/themes/${theme-name}
             - run:
                 command: |
                   curl -X DELETE \
@@ -384,17 +374,17 @@ jobs:
                   - assets-{{ .Branch }}-{{ checksum "/tmp/assets_version" }}
             - run:
                 command: |
-                  if [[ ! -d /tmp/project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>/<< pipeline.parameters.src-dir >> ]]; then
+                  if [[ ! -d /tmp/project/public_html/web/app/themes/${theme-name}/${src-dir} ]]; then
                     if [[ "${ENV}" == "staging" ]] || [[ "${ENV}" == "production" ]] ; then
                         ansible-playbook ci-provision.yml --tags=wordpress,wp-cli --skip-tags=wordpress-install-directories -e '{"env":"ci","install_wp":false}' -vvv
-                        ansible-playbook pull.yml -i hosts/ci -i hosts/${ENV} -e site=<< pipeline.parameters.site-name >> -e env=${ENV} --tags=database -vvv
-                        cd /tmp/project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>
+                        ansible-playbook pull.yml -i hosts/ci -i hosts/${ENV} -e site=${site-name} -e env=${ENV} --tags=database -vvv
+                        cd /tmp/project/public_html/web/app/themes/${theme-name}
                         [ -s "$HOME/.nvm/nvm.sh" ] && \. "$HOME/.nvm/nvm.sh"
                         [ -s "$HOME/.nvm/bash_completion" ] && \. "$HOME/.nvm/bash_completion"
                         nvm install
-                        yarn build<< pipeline.parameters.production_flag >>
+                        yarn build${production_flag}
                     else
-                        cd /tmp/project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>
+                        cd /tmp/project/public_html/web/app/themes/${theme-name}
                         [ -s "$HOME/.nvm/nvm.sh" ] && \. "$HOME/.nvm/nvm.sh"
                         [ -s "$HOME/.nvm/bash_completion" ] && \. "$HOME/.nvm/bash_completion"
                         nvm install
@@ -413,14 +403,14 @@ jobs:
                 working_directory: /tmp/project/trellis
       - save_cache:
           paths:
-            - project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>/<< pipeline.parameters.src-dir >>
+            - project/public_html/web/app/themes/${theme-name}/${src-dir}
           key: assets-{{ .Branch }}-{{ checksum "/tmp/assets_version" }}
       - persist_to_workspace:
           root: /tmp
           paths:
-            - project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>/<< pipeline.parameters.src-dir >>
+            - project/public_html/web/app/themes/${theme-name}/${src-dir}
       - store_artifacts:
-          path: /tmp/project/<< pipeline.parameters.theme-path >>/<< pipeline.parameters.theme-name >>/<< pipeline.parameters.src-dir >>/report.html
+          path: /tmp/project/public_html/web/app/themes/${theme-name}/${src-dir}/report.html
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -434,11 +424,7 @@ jobs:
       # ne fonctionne pas car selenium ne parvient pas à se connecter à l'image principale et doit donc être lancé depuis la meme image
       # - image: selenium/standalone-chrome:90.0.4430.212
       #   name: webdriver
-    working_directory: /tmp
     parameters:
-      php-version:
-        type: string
-        default: "8.0"
       repo:
         description: "The repo to clone"
         type: string
@@ -448,7 +434,7 @@ jobs:
         type: string
         default: "develop"
       package_name:
-        default: << pipeline.parameters.site-name >>
+        default: ${site-name}
         description: Name of the plugin or theme (directory name)
         type: string
       package_type:
@@ -464,6 +450,7 @@ jobs:
       - checkout:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
+      - get_ansible_vars
       - browser-tools/install-chrome:
           chrome-version: "90.0.4430.212"
       - browser-tools/install-chromedriver
@@ -524,7 +511,7 @@ jobs:
       #     keys:
       #       - "installwpbrowser-v5"
       # - run:
-      #     command: ansible-playbook codeception-install.yml -e "env=ci site=<< pipeline.parameters.site-name >>" -vvv
+      #     command: ansible-playbook codeception-install.yml -e "env=ci site=${site-name}" -vvv
       #     working_directory: project/trellis
 
       - prepare_ansible
@@ -600,7 +587,6 @@ workflows:
       - build_php:
           pre-steps:
             - get_php_version
-          php-version: ${PHP_VERSION}
           context:
             - TOKENS
             - slack-secrets
@@ -611,7 +597,6 @@ workflows:
       - build_js:
           pre-steps:
             - get_php_version
-          php-version: ${PHP_VERSION}
           context:
             - TOKENS
             - slack-secrets
