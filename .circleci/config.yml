@@ -26,10 +26,29 @@ parameters:
     type: string
     default: ":production" # TODO  build production flag, usually " --production" or ":production"
 
+images:
+  php-ansible: &php-ansible
+    image: "digitalswing/php-ansible:7.4"
+  mariadb: &mariadb
+    image: "cimg/mariadb:10.7.4"
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: wordpress
+    name: mysql
+
 executors:
   base:
     docker:
-      - image: "digitalswing/php-ansible:<< parameters.php-version >>"
+      - *php-ansible
+    working_directory: /tmp
+  base_db:
+    docker:
+      - *php-ansible
+      - *mariadb
+    working_directory: /tmp
+
 commands:
   add_key_to_known_hosts:
     description: Adds SSH key to known_hosts (if it matches a fingerprint)
@@ -216,16 +235,7 @@ jobs:
         description: "Git branch to clone"
         type: string
         default: "develop"
-    docker:
-      - image: "digitalswing/php-ansible:<< parameters.php-version >>"
-      - environment:
-          MYSQL_DATABASE: wordpress
-          MYSQL_PASSWORD: wordpress
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_USER: wordpress
-        image: "cimg/mariadb:10.10.1"
-        name: mysql
-    working_directory: /tmp
+    executor: base_db
     steps:
       - add_github_key_to_known_hosts
       - checkout
@@ -269,16 +279,7 @@ jobs:
         description: "Git branch to clone"
         type: string
         default: "develop"
-    docker:
-      - image: "digitalswing/php-ansible:<< parameters.php-version >>"
-      - environment:
-          MYSQL_DATABASE: wordpress
-          MYSQL_PASSWORD: wordpress
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_USER: wordpress
-        image: "cimg/mariadb:10.10.1"
-        name: mysql
-    working_directory: /tmp
+    executor: base_db
     steps:
       - add_github_key_to_known_hosts
       - checkout:
@@ -428,16 +429,8 @@ jobs:
     description: |
       Run codeception tests for end-to-end testing on a WordPress site.
       Codeception supports unit, wpunit, functional, and acceptance testing.
-    docker:
-      - image: "digitalswing/php-ansible:<< parameters.php-version >>"
-      - environment:
-          MYSQL_DATABASE: wordpress
-          MYSQL_PASSWORD: wordpress
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_USER: wordpress
-        image: "cimg/mariadb:10.10.1"
-        name: mysql
-
+    executor:
+      base_db
       # ne fonctionne pas car selenium ne parvient pas à se connecter à l'image principale et doit donc être lancé depuis la meme image
       # - image: selenium/standalone-chrome:90.0.4430.212
       #   name: webdriver
@@ -614,7 +607,7 @@ workflows:
           matrix:
             parameters:
               repo: ["bedrock-trellis-ds"]
-              branch: ["develop", "7.4"]
+              branch: ["7.4"]
       - build_js:
           pre-steps:
             - get_php_version
@@ -627,11 +620,10 @@ workflows:
           matrix:
             parameters:
               repo: ["bedrock-trellis-ds"]
-              branch: ["develop", "7.4"]
+              branch: ["7.4"]
       - codeception:
           pre-steps:
             - get_php_version
-          php-version: ${PHP_VERSION}
           context:
             - TOKENS
             - slack-secrets
@@ -650,4 +642,4 @@ workflows:
           matrix:
             parameters:
               repo: ["bedrock-trellis-ds"]
-              branch: ["develop", "7.4"]
+              branch: ["7.4"]
