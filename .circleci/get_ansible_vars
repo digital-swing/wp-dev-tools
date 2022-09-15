@@ -8,5 +8,5 @@ ansible_vars[PUBLIC_DIR]="ansible develop -i hosts/develop -m shell -c local -a 
 ansible_vars[PRODUCTION_FLAG]="ansible develop -i hosts/develop -m shell -c local -e item=\"{{ (wordpress_sites | dict2items | first ) }}\" -a \"echo {{ (npm_build_folders | first).production_flag }}\" | tail -1"
 
 for key in "${!ansible_vars[@]}"
-    do echo "export ${key}='$(eval "${ansible_vars[$key]}")'" >> "$BASH_ENV"
+    do echo "export ${key}=\"$(eval "${ansible_vars[$key]}")\"" >> "$BASH_ENV"
 done
