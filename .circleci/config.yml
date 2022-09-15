@@ -240,7 +240,7 @@ jobs:
       - php/install-packages:
           app-dir: "project/public_html"
       - php/install-packages:
-          app-dir: "project/public_html/web/app/themes/${THEME_NAME}"
+          app-dir: project/public_html/web/app/themes/$THEME_NAME
       - persist_to_workspace:
           root: /tmp
           paths:
@@ -287,7 +287,8 @@ jobs:
       - node/install
       - node/install-packages:
           pkg-manager: yarn
-          app-dir: "project/public_html/web/app/themes/${THEME_NAME}"
+          app-dir: |
+            "project/public_html/web/app/themes/${THEME_NAME}"
           include-branch-in-cache-key: false
       - run:
           command: |
