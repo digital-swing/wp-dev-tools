@@ -103,7 +103,7 @@ commands:
             else
                 BRANCH="$CIRCLE_BRANCH"
             fi
-            composer require --dev digital-swing/wp-dev-tools:dev-$CIRCLE_BRANCH -W
+            composer require --dev digital-swing/wp-dev-tools:${CIRCLE_BRANCH}.x-dev -W
           working_directory: project/public_html
           name: Require current package branch
   get_php_version:
