@@ -490,7 +490,7 @@ workflows:
           matrix:
             parameters:
               repo: ["bedrock-trellis-ds"]
-              branch: ["7.4"]
+              branch: ["php7.4"]
       - build_js:
           pre-steps:
             - get_php_version
@@ -502,7 +502,7 @@ workflows:
           matrix:
             parameters:
               repo: ["bedrock-trellis-ds"]
-              branch: ["7.4"]
+              branch: ["php7.4"]
       - codeception:
           pre-steps:
             - get_php_version
@@ -524,4 +524,4 @@ workflows:
           matrix:
             parameters:
               repo: ["bedrock-trellis-ds"]
-              branch: ["7.4"]
+              branch: ["php7.4"]
