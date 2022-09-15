@@ -316,8 +316,7 @@ jobs:
       - node/install
       - node/install-packages:
           pkg-manager: yarn
-          app-dir: |
-            "project/public_html/web/app/themes/<< parameters.theme-name >>"
+          app-dir: project/public_html/web/app/themes/<< parameters.theme-name >>
           include-branch-in-cache-key: false
       - run:
           command: |
