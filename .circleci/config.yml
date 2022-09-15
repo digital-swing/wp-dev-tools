@@ -230,9 +230,9 @@ jobs:
       - checkout_test_repo:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
-      - get_ansible_vars
       - prepare_ansible
       - find_wp_install
+      - get_ansible_vars
       - provision_server:
           tags: wordpress-setup,vendor-tokens,dotenv,belt
           skip_tags: wordpress-setup-database,wordpress-setup-self-signed-certificate,wordpress-setup-nginx-client-cert
@@ -277,11 +277,11 @@ jobs:
       - checkout_test_repo:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
-      - get_ansible_vars
       - prepare_ansible
       - attach_workspace:
           at: /tmp
       - find_wp_install
+      - get_ansible_vars
       - provision_server:
           tags: common
       - node/install
@@ -354,7 +354,6 @@ jobs:
       - checkout_test_repo:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
-      - get_ansible_vars
       - browser-tools/install-chrome:
           chrome-version: "90.0.4430.212"
       - browser-tools/install-chromedriver
@@ -416,6 +415,7 @@ jobs:
 
       - prepare_ansible
       - find_wp_install
+      - get_ansible_vars
       - provision_server:
           tags: wordpress,wp-cli,codeception,mail
           skip_tags: wordpress-install-directories
