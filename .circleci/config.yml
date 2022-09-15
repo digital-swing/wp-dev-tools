@@ -156,9 +156,9 @@ commands:
           path: /tmp/wp-dev-tools
       - run:
           command: |
-            ./get_ansible_vars
+            /tmp/wp-dev-tools/.circleci/get_ansible_vars
           name: Get vars from ansible config and store them to $BASH_ENV
-          working_directory: /tmp/wp-dev-tools/.circleci
+          working_directory: /tmp/project/trellis
   find_wp_install:
     description: Set up our WP_ENV based on the environment
     parameters:
@@ -227,10 +227,10 @@ jobs:
     executor: base_db
     steps:
       - add_github_key_to_known_hosts
-      - get_ansible_vars
       - checkout_test_repo:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
+      - get_ansible_vars
       - prepare_ansible
       - find_wp_install
       - provision_server:
@@ -274,10 +274,10 @@ jobs:
     executor: base_db
     steps:
       - add_github_key_to_known_hosts
-      - get_ansible_vars
       - checkout_test_repo:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
+      - get_ansible_vars
       - prepare_ansible
       - attach_workspace:
           at: /tmp
@@ -351,10 +351,10 @@ jobs:
         type: enum
     steps:
       - add_github_key_to_known_hosts
-      - get_ansible_vars
       - checkout_test_repo:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
+      - get_ansible_vars
       - browser-tools/install-chrome:
           chrome-version: "90.0.4430.212"
       - browser-tools/install-chromedriver
