@@ -154,8 +154,9 @@ commands:
     steps:
       - run:
           command: |
-            .circleci/get_ansible_vars
+            ./get_ansible_vars
           name: Set up the WP install name
+          working_directory: project/.circleci
   find_wp_install:
     description: Set up our WP_ENV based on the environment
     parameters:
