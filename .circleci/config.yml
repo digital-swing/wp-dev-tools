@@ -8,7 +8,7 @@ orbs:
 
 images:
   php-ansible: &php-ansible
-    image: "digitalswing/php-ansible:7.4"
+    image: "digitalswing/php-ansible:8.0"
   mariadb: &mariadb
     image: "cimg/mariadb:10.7.4"
     environment:
@@ -103,7 +103,7 @@ commands:
             else
                 BRANCH="$CIRCLE_BRANCH"
             fi
-            composer require --dev digital-swing/wp-dev-tools:dev-$CIRCLE_BRANCH -W
+            composer require --dev digital-swing/wp-dev-tools:${CIRCLE_BRANCH}.x-dev -W
           working_directory: project/public_html
           name: Require current package branch
   get_php_version:
@@ -224,6 +224,18 @@ jobs:
         description: "Git branch to clone"
         type: string
         default: "develop"
+      site-name:
+        description: The site name in ansible config
+        type: string
+        default: "bedrock-develop"
+      theme-name:
+        description: The theme folder
+        type: string
+        default: "ds-custom"
+      public-dir:
+        description: Build assets folder
+        type: string
+        default: public
     executor: base_db
     steps:
       - add_github_key_to_known_hosts
@@ -234,13 +246,13 @@ jobs:
       - find_wp_install
       - get_ansible_vars
       - provision_server:
-          tags: wordpress-setup,vendor-tokens,dotenv,belt
+          tags: wordpress-setup,vendor-tokens,dotenv
           skip_tags: wordpress-setup-database,wordpress-setup-self-signed-certificate,wordpress-setup-nginx-client-cert
       - require_current_version
       - php/install-packages:
           app-dir: "project/public_html"
       - php/install-packages:
-          app-dir: "project/public_html/web/app/themes/${theme-name}"
+          app-dir: project/public_html/web/app/themes/<< parameters.theme-name >>
       - persist_to_workspace:
           root: /tmp
           paths:
@@ -250,7 +262,7 @@ jobs:
             - project/public_html/web/wp
             - project/public_html/web/app/plugins
             - project/public_html/web/app/mu-plugins
-            - project/public_html/web/app/themes/${theme-name}/vendor
+            - project/public_html/web/app/themes/<< parameters.theme-name >>/vendor
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -271,6 +283,23 @@ jobs:
         description: "Git branch to clone"
         type: string
         default: "develop"
+      site-name:
+        description: The site name in ansible config
+        type: string
+        default: "bedrock-develop"
+      theme-name:
+        description: The theme folder
+        type: string
+        default: "ds-custom"
+      public-dir:
+        description: Build assets folder
+        type: string
+        default: public
+      production-flag:
+        description: Build flag
+        type: string
+        default: ":production"
+
     executor: base_db
     steps:
       - add_github_key_to_known_hosts
@@ -287,13 +316,13 @@ jobs:
       - node/install
       - node/install-packages:
           pkg-manager: yarn
-          app-dir: "project/public_html/web/app/themes/${theme-name}"
+          app-dir: project/public_html/web/app/themes/<< parameters.theme-name >>
           include-branch-in-cache-key: false
       - run:
           command: |
             if [[ "${ENV}" == "staging" ]] || [[ "${ENV}" == "production" ]] ; then
               ansible-playbook ci-provision.yml --tags=wordpress,wp-cli --skip-tags=wordpress-install-directories -e '{"env":"ci","install_wp":false}' -vvv            
-              ansible-playbook pull.yml -i hosts/ci -i hosts/${ENV} -e site=${site-name} -e env=${ENV} --tags=database -vvv
+              ansible-playbook pull.yml -i hosts/ci -i hosts/${ENV} -e site=<< parameters.site-name >> -e env=${ENV} --tags=database -vvv
             fi
           name: Provision wordpress
           working_directory: /tmp/project/trellis
@@ -303,22 +332,22 @@ jobs:
             [ -s "$HOME/.nvm/bash_completion" ] && \. "$HOME/.nvm/bash_completion"
             nvm install
             if [[ "${ENV}" == "staging" ]] || [[ "${ENV}" == "production" ]] ; then
-                yarn build${production_flag}
+                yarn build<< parameters.production-flag >>
             else
                 yarn build
             fi
           name: Build theme assets
-          working_directory: project/public_html/web/app/themes/${theme-name}
+          working_directory: project/public_html/web/app/themes/<< parameters.theme-name >>
       - save_cache:
           paths:
-            - project/public_html/web/app/themes/${theme-name}/${src-dir}
+            - project/public_html/web/app/themes/<< parameters.theme-name >>/<< parameters.public-dir >>
           key: assets-{{ .Branch }}-{{ checksum "/tmp/assets_version" }}
       - persist_to_workspace:
           root: /tmp
           paths:
-            - project/public_html/web/app/themes/${theme-name}/${src-dir}
+            - project/public_html/web/app/themes/<< parameters.theme-name >>/<< parameters.public-dir >>
       - store_artifacts:
-          path: /tmp/project/public_html/web/app/themes/${theme-name}/${src-dir}/report.html
+          path: /tmp/project/public_html/web/app/themes/<< parameters.theme-name >>/<< parameters.public-dir >>/report.html
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -337,8 +366,20 @@ jobs:
         description: "Git branch to clone"
         type: string
         default: "develop"
+      site-name:
+        description: The site name in ansible config
+        type: string
+        default: "bedrock-develop"
+      theme-name:
+        description: The theme folder
+        type: string
+        default: "ds-custom"
+      public-dir:
+        description: Build assets folder
+        type: string
+        default: public
       package_name:
-        default: ${site-name}
+        default: << parameters.site-name >>
         description: Name of the plugin or theme (directory name)
         type: string
       package_type:
@@ -410,7 +451,7 @@ jobs:
       #     keys:
       #       - "installwpbrowser-v5"
       # - run:
-      #     command: ansible-playbook codeception-install.yml -e "env=ci site=${site-name}" -vvv
+      #     command: ansible-playbook codeception-install.yml -e "env=ci site=<< parameter.site-name >>" -vvv
       #     working_directory: project/trellis
 
       - prepare_ansible
@@ -485,36 +526,42 @@ workflows:
   build_test_deploy:
     jobs:
       - build_php:
+          name: build_php-bedrock-trellis-ds-develop
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
-          matrix:
-            parameters:
-              repo: ["bedrock-trellis-ds"]
-              branch: ["php7.4"]
+          repo: "bedrock-trellis-ds"
+          branch: "develop"
+          site-name: bedrock-develop
+          theme-name: ds-custom
+          public-dir: public
       - build_js:
+          name: build_js-bedrock-trellis-ds-develop
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-<< matrix.branch >>-<< matrix.repo >>
-          matrix:
-            parameters:
-              repo: ["bedrock-trellis-ds"]
-              branch: ["php7.4"]
+            - build_php-bedrock-trellis-ds-develop
+          repo: "bedrock-trellis-ds"
+          branch: "develop"
+          site-name: bedrock-develop
+          theme-name: ds-custom
+          public-dir: public
+          production-flag: ":production"
       - codeception:
+          name: codeception-bedrock-trellis-ds-develop
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-<< matrix.branch >>-<< matrix.repo >>
-            - build_js-<< matrix.branch >>-<< matrix.repo >>
+            - build_php-bedrock-trellis-ds-develop
+            - build_js-bedrock-trellis-ds-develop
           filters:
             branches:
               only:
@@ -524,7 +571,8 @@ workflows:
                 - develop
                 - /.*php-.*/
                 - /.*codeception.*/
-          matrix:
-            parameters:
-              repo: ["bedrock-trellis-ds"]
-              branch: ["php7.4"]
+          repo: "bedrock-trellis-ds"
+          branch: "develop"
+          site-name: bedrock-develop
+          theme-name: ds-custom
+          public-dir: public
