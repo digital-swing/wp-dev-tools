@@ -8,7 +8,7 @@ orbs:
 
 images:
   php-ansible: &php-ansible
-    image: "digitalswing/php-ansible:8.0"
+    image: "digitalswing/php-ansible:8.0.11"
   mariadb: &mariadb
     image: "cimg/mariadb:10.7.4"
     environment:
