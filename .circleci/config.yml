@@ -98,12 +98,12 @@ commands:
     steps:
       - run:
           command: |
-            if [ "$CIRCLE_BRANCH" == "main" ]; then
-                BRANCH="main"
+            if [ "$CIRCLE_BRANCH" == "7.4" ] || [ "$CIRCLE_BRANCH" == "8.0" ]; then
+                BRANCH="${CIRCLE_BRANCH}.x-dev"
             else
-                BRANCH="$CIRCLE_BRANCH"
+                BRANCH="${CIRCLE_BRANCH}"
             fi
-            composer require --dev digital-swing/wp-dev-tools:${CIRCLE_BRANCH}.x-dev -W
+            composer require --dev digital-swing/wp-dev-tools:${BRANCH} -W
           working_directory: project/public_html
           name: Require current package branch
   get_php_version:
