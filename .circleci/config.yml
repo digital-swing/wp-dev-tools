@@ -357,6 +357,7 @@ jobs:
       Run codeception tests for end-to-end testing on a WordPress site.
       Codeception supports unit, wpunit, functional, and acceptance testing.
     executor: base_db
+    parallelism: 5
     parameters:
       repo:
         description: "The repo to clone"
@@ -391,12 +392,10 @@ jobs:
           - project
         type: enum
     steps:
-      - add_github_key_to_known_hosts
       - checkout_test_repo:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
-      - browser-tools/install-chrome:
-          chrome-version: "90.0.4430.212"
+      - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
           command: |
@@ -426,37 +425,7 @@ jobs:
                   "$BASH_ENV"
                 name: Set up tests directory
                 working_directory: /tmp/project/public_html
-      # - when:
-      #     condition:
-      #       or:
-      #         - equal:
-      #             - theme
-      #             - << parameters.package_type >>
-      #         - equal:
-      #             - plugin
-      #             - << parameters.package_type >>
-      #     steps:
-      #       - attach_workspace:
-      #           at: >-
-      #             /home/circleci/project/public_html/web/app/<< parameters.package_type
-      #             >>s/<< parameters.package_name >>
-      #       - run:
-      #           command: >-
-      #             echo "export
-      #             CODECEPT_DIRECTORY=$CIRCLE_WORKING_DIRECTORY/public_html/web/app/<<
-      #             parameters.package_type >>s/<< parameters.package_name >>" >>
-      #             "$BASH_ENV"
-      #           name: Set up tests directory
-      # - restore_cache:
-      #     keys:
-      #       - "installwpbrowser-v5"
-      # - run:
-      #     command: ansible-playbook codeception-install.yml -e "env=ci site=<< parameter.site-name >>" -vvv
-      #     working_directory: project/trellis
-
       - prepare_ansible
-      - find_wp_install
-      - get_ansible_vars
       - provision_server:
           tags: nginx-includes,wordpress,wp-cli,codeception,mail
           skip_tags: wordpress-install-directories
@@ -466,54 +435,20 @@ jobs:
           working_directory: /tmp/project/public_html
       - run: touch "$CODECEPT_DIRECTORY/.env"
       - run:
+          name: Run Codeception tests
           command: |
-            php_files=(`find "$CODECEPT_DIRECTORY/tests/acceptance/" -name "*.php"`)
-            if [ ${#php_files[@]} -gt 0 ]
-            then
-                cd "$CODECEPT_DIRECTORY" && ./vendor/bin/codecept run acceptance \
-                --env=circleci \
-                --xml="$CODECEPT_DIRECTORY/tests/_output/acceptance/results.xml" \
-                --no-interaction \
-                -vvv
-            fi
-          name: Run Codeception acceptance tests
-          working_directory: /tmp/project/public_html
-      - run:
-          command: |
-            php_files=(`find "$CODECEPT_DIRECTORY/tests/functional/" -name "*.php"`)
-            if [ ${#php_files[@]} -gt 0 ]
-            then
-                cd "$CODECEPT_DIRECTORY" && ./vendor/bin/codecept run functional \
-                --env=circleci \
-                --xml="$CODECEPT_DIRECTORY/tests/_output/functional/results.xml" \
-                --no-interaction \
-                -vvv
-            fi
-          name: Run Codeception functional tests
-          working_directory: /tmp/project/public_html
-      - run:
-          command: |
-            php_files=(`find "$CODECEPT_DIRECTORY/tests/unit/" -name "*.php"`)
-            if [ ${#php_files[@]} -gt 0 ]
-            then
-                cd "$CODECEPT_DIRECTORY" && ./vendor/bin/codecept run unit \
-                --xml="$CODECEPT_DIRECTORY/tests/_output/unit/results.xml" \
-                --no-interaction \
-                -vvv
-            fi
-          name: Run Codeception unit tests
-          working_directory: /tmp/project/public_html
-      - run:
-          command: |
-            php_files=(`find "$CODECEPT_DIRECTORY/tests/wpunit/" -name "*.php"`)
-            if [ ${#php_files[@]} -gt 0 ]
-            then
-                cd "$CODECEPT_DIRECTORY" && ./vendor/bin/codecept run wpunit \
-                --xml="$CODECEPT_DIRECTORY/tests/_output/wpunit/results.xml" \
-                --no-interaction \
-                -vvv
-            fi
-          name: Run Codeception wpunit tests
+            shopt -s globstar
+            circleci tests glob \
+              "$CODECEPT_DIRECTORY/tests/acceptance/**/*.php" \
+              "$CODECEPT_DIRECTORY/tests/functional/**/*.php" \
+              "$CODECEPT_DIRECTORY/tests/unit/**/*.php" \
+              "$CODECEPT_DIRECTORY/tests/wpunit/**/*.php" \
+              | circleci tests split --split-by=timings \
+              > "$CODECEPT_DIRECTORY/tests/_data/ci_group_${CIRCLE_NODE_INDEX}"
+            cd "$CODECEPT_DIRECTORY" && ./vendor/bin/codecept run -g "ci_group_${CIRCLE_NODE_INDEX}" \
+              --xml="$CODECEPT_DIRECTORY/tests/_output/results.xml" \
+              --no-interaction \
+              -vvv
           working_directory: /tmp/project/public_html
       - store_test_results:
           path: /tmp/project/public_html/tests/_output
