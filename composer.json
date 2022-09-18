@@ -20,7 +20,6 @@
         "codeception/module-phpbrowser": "^1.0",
         "codeception/module-webdriver": "^1.0",
         "codeception/util-universalframework": "^1.0",
-        "cweagans/composer-patches": "1.7.2",
         "dealerdirect/phpcodesniffer-composer-installer": "0.7.2",
         "ericmartel/codeception-email-mailhog": "1.0.8",
         "lucatume/wp-browser": "3.1.6",
@@ -45,7 +44,6 @@
         "secure-http": false,
         "sort-packages": true,
         "allow-plugins": {
-            "cweagans/composer-patches": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
             "phpro/grumphp": true,
             "phpstan/extension-installer": true
@@ -55,11 +53,6 @@
     "extra": {
         "grumphp": {
             "disable-plugin": true
-        },
-        "patches": {
-            "php-stubs/wordpress-stubs": {
-                "disable stub conflicting with roots/wp-password-bcrypt": "./patches/stubs.patch"
-            }
         }
     }
 }
