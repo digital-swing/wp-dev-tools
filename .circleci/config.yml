@@ -526,42 +526,42 @@ workflows:
   build_test_deploy:
     jobs:
       - build_php:
-          name: build_php-bedrock-trellis-ds-develop
+          name: build_php-bedrock-trellis-ds-php7.4
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
           repo: "bedrock-trellis-ds"
-          branch: "develop"
+          branch: "php7.4"
           site-name: bedrock-develop
           theme-name: ds-custom
           public-dir: public
       - build_js:
-          name: build_js-bedrock-trellis-ds-develop
+          name: build_js-bedrock-trellis-ds-php7.4
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-bedrock-trellis-ds-develop
+            - build_php-bedrock-trellis-ds-php7.4
           repo: "bedrock-trellis-ds"
-          branch: "develop"
+          branch: "php7.4"
           site-name: bedrock-develop
           theme-name: ds-custom
           public-dir: public
           production-flag: ":production"
       - codeception:
-          name: codeception-bedrock-trellis-ds-develop
+          name: codeception-bedrock-trellis-ds-php7.4
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-bedrock-trellis-ds-develop
-            - build_js-bedrock-trellis-ds-develop
+            - build_php-bedrock-trellis-ds-php7.4
+            - build_js-bedrock-trellis-ds-php7.4
           filters:
             branches:
               only:
@@ -572,7 +572,7 @@ workflows:
                 - /.*php-.*/
                 - /.*codeception.*/
           repo: "bedrock-trellis-ds"
-          branch: "develop"
+          branch: "php7.4"
           site-name: bedrock-develop
           theme-name: ds-custom
           public-dir: public
