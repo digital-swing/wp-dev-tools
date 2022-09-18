@@ -246,7 +246,7 @@ jobs:
       - find_wp_install
       - get_ansible_vars
       - provision_server:
-          tags: wordpress-setup,vendor-tokens,dotenv
+          tags: nginx-includes,wordpress-setup,vendor-tokens,dotenv
           skip_tags: wordpress-setup-database,wordpress-setup-self-signed-certificate,wordpress-setup-nginx-client-cert
       - require_current_version
       - php/install-packages:
@@ -458,7 +458,7 @@ jobs:
       - find_wp_install
       - get_ansible_vars
       - provision_server:
-          tags: wordpress,wp-cli,codeception,mail
+          tags: nginx-includes,wordpress,wp-cli,codeception,mail
           skip_tags: wordpress-install-directories
       - run:
           name: Import database
