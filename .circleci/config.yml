@@ -101,7 +101,7 @@ commands:
             if [ "$CIRCLE_BRANCH" == "7.4" ] || [ "$CIRCLE_BRANCH" == "8.0" ]; then
                 BRANCH="${CIRCLE_BRANCH}.x-dev"
             else
-                BRANCH="${CIRCLE_BRANCH}"
+                BRANCH="dev-${CIRCLE_BRANCH}"
             fi
             composer require --dev digital-swing/wp-dev-tools:${BRANCH} -W
           working_directory: project/public_html
