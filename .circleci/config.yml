@@ -392,6 +392,7 @@ jobs:
           - project
         type: enum
     steps:
+      - add_github_key_to_known_hosts
       - checkout_test_repo:
           repo: << parameters.repo >>
           branch: << parameters.branch >>
