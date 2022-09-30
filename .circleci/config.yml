@@ -313,6 +313,9 @@ jobs:
       - get_ansible_vars
       - provision_server:
           tags: common
+      - run:
+          command: cp project/.nvmrc .
+          name: Copy nvmrc to current folder
       - node/install
       - node/install-packages:
           pkg-manager: yarn
