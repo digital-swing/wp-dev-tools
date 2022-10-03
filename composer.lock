@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e5f9fc1f75c493c43942f8ba3efdfd48",
+    "content-hash": "4730902d82b74318d93e5441ce8b2795",
     "packages": [
         {
             "name": "amphp/amp",
@@ -4587,16 +4587,16 @@
         },
         {
             "name": "php-stubs/acf-pro-stubs",
-            "version": "v5.12.2",
+            "version": "v6.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/acf-pro-stubs.git",
-                "reference": "7e44b653bd72e5eebf725f3af6b5afaae3039dcf"
+                "reference": "3f029889ab95d7ed8baf16149e150bd4bb903227"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/7e44b653bd72e5eebf725f3af6b5afaae3039dcf",
-                "reference": "7e44b653bd72e5eebf725f3af6b5afaae3039dcf",
+                "url": "https://api.github.com/repos/php-stubs/acf-pro-stubs/zipball/3f029889ab95d7ed8baf16149e150bd4bb903227",
+                "reference": "3f029889ab95d7ed8baf16149e150bd4bb903227",
                 "shasum": ""
             },
             "require": {
@@ -4625,9 +4625,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/acf-pro-stubs/issues",
-                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v5.12.2"
+                "source": "https://github.com/php-stubs/acf-pro-stubs/tree/v6.0.2"
             },
-            "time": "2022-05-28T19:55:17+00:00"
+            "time": "2022-10-03T16:14:53+00:00"
         },
         {
             "name": "php-stubs/wordpress-globals",
@@ -4672,16 +4672,16 @@
         },
         {
             "name": "php-stubs/wordpress-stubs",
-            "version": "v6.0.1",
+            "version": "v6.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-stubs/wordpress-stubs.git",
-                "reference": "e04781a84e364615a7b5f70fdc345c8253ca5b8f"
+                "reference": "8f696e429e375ef40a841ecf5ac686ff7437b4dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/e04781a84e364615a7b5f70fdc345c8253ca5b8f",
-                "reference": "e04781a84e364615a7b5f70fdc345c8253ca5b8f",
+                "url": "https://api.github.com/repos/php-stubs/wordpress-stubs/zipball/8f696e429e375ef40a841ecf5ac686ff7437b4dc",
+                "reference": "8f696e429e375ef40a841ecf5ac686ff7437b4dc",
                 "shasum": ""
             },
             "replace": {
@@ -4713,9 +4713,9 @@
             ],
             "support": {
                 "issues": "https://github.com/php-stubs/wordpress-stubs/issues",
-                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.0.1"
+                "source": "https://github.com/php-stubs/wordpress-stubs/tree/v6.0.2"
             },
-            "time": "2022-07-15T11:10:45+00:00"
+            "time": "2022-09-30T17:24:55+00:00"
         },
         {
             "name": "php-webdriver/webdriver",
