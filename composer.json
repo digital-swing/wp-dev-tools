@@ -59,7 +59,7 @@
 		},
 		"patches": {
 			"php-stubs/wordpress-stubs": {
-				"disable stub conflicting with roots/wp-password-bcrypt": "./patches/stubs.patch"
+				"disable stub conflicting with roots/wp-password-bcrypt": "https://raw.githubusercontent.com/digital-swing/wp-dev-tools/8.0/patches/stubs.patch"
 			}
 		}
 	}
