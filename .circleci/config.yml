@@ -128,21 +128,17 @@ commands:
           domain: github.com
           key_type: ed25519
           fingerprint: "SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU"
-  checkout_test_repo:
-    description: Clone << parameters.repo >>
+  checkout:
+    description: Clone bedrock-trellis-ds
     parameters:
-      repo:
-        description: "The repo to clone"
+      path:
+        description: "Where to checkout files"
         type: string
-        default: "bedrock-trellis-ds"
-      branch:
-        description: "Git branch to clone"
-        type: string
-        default: "develop"
+        default: project
     steps:
       - run:
           command: |
-            git clone -b << parameters.branch >> git@github.com:digital-swing/<< parameters.repo >>.git project
+            git clone -b php7.4 git@github.com:digital-swing/bedrock-trellis-ds.git << parameters.path >>
   require_current_version:
     description: Require current package branch
     steps:
@@ -329,8 +325,7 @@ commands:
         type: env_var_name
     executor: base_db
     steps:
-      - checkout:
-          path: project
+      - checkout
       - trellis/prepare:
           cache-version: << pipeline.parameters.trellis-cache-version >>
           trellis-path: /tmp/project/trellis
@@ -474,8 +469,7 @@ commands:
           - project
         type: enum
     steps:
-      - checkout:
-          path: project
+      - checkout
       - find_wp_install
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
