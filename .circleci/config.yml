@@ -8,12 +8,18 @@ orbs:
   trellis: digital-swing/trellis-tools@0.2.1
 
 parameters:
+  env:
+    type: string
+    default: "develop"
   site-name:
     type: string
     default: "bedrock-develop"
   theme-path:
     type: string
     default: "web/app/themes/ds-custom"
+  force-theme-rebuild:
+    type: boolean
+    default: true
   rebuild-assets:
     type: boolean
     default: false
@@ -23,9 +29,6 @@ parameters:
   production-flag:
     type: string
     default: ":production"
-  default-environment:
-    type: string
-    default: "develop"
   trellis-cache-version:
     type: string
     default: v1
