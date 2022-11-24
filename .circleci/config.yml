@@ -32,6 +32,9 @@ parameters:
   trellis-cache-version:
     type: string
     default: v1
+  debug:
+    type: boolean
+    default: true
 
 images:
   php-ansible: &php-ansible
