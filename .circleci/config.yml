@@ -13,11 +13,11 @@ parameters:
     default: "bedrock-develop"
   theme-path:
     type: string
-    default: "public_html/web/app/themes/ds-custom"
+    default: "web/app/themes/ds-custom"
   rebuild-assets:
     type: boolean
     default: false
-  src-dir:
+  public-dir:
     type: string
     default: public
   production-flag:
@@ -26,6 +26,9 @@ parameters:
   default-environment:
     type: string
     default: "develop"
+  trellis-cache-version:
+    type: string
+    default: v1
 
 images:
   php-ansible: &php-ansible
@@ -308,7 +311,7 @@ commands:
             - project/public_html/web/wp
             - project/public_html/web/app/plugins
             - project/public_html/web/app/mu-plugins
-            - project/public_html/web/app/themes/<< parameters.theme-name >>/vendor
+            - project/public_html/<< pipeline.parameters.theme-path >>/vendor
       - slack/notify:
           event: fail
           template: basic_fail_1
@@ -329,6 +332,7 @@ commands:
           cache-version: << pipeline.parameters.trellis-cache-version >>
           trellis-path: /tmp/project/trellis
           vault-file: ~/.vault_pass
+      - find_wp_install
       - attach_workspace:
           at: /tmp
       - provision-server:
@@ -469,6 +473,7 @@ commands:
     steps:
       - checkout:
           path: project
+      - find_wp_install
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
