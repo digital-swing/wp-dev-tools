@@ -220,10 +220,14 @@ commands:
         description: "Whether to install wp with wp core install"
         type: boolean
         default: false
+      trellis-path:
+        description: "Working directory"
+        type: string
+        default: /tmp/project/trellis
     steps:
       - run:
-          command: ansible-playbook ci-provision.yml --tags=<< parameters.tags >> --skip-tags=<< parameters.skip_tags >> -e '{"env":"<< parameters.site-env>>","install_wp":<< parameters.install_wp>>}' -vvv
-          working_directory: /tmp/project/trellis
+          command: trellis exec ansible-playbook ci-provision.yml --tags=<< parameters.tags >> --skip-tags=<< parameters.skip_tags >> -e '{"env":"<< parameters.site-env>>","install_wp":<< parameters.install_wp>>}' <<# pipeline.parameters.debug >>-vvv<</ pipeline.parameters.debug >>
+          working_directory: << parameters.trellis-path >>
           name: Provision server
   pull:
     parameters:
@@ -253,57 +257,27 @@ commands:
              --tags=<<# parameters.database >>database<</ parameters.database >>,<<# parameters.uploads >>uploads<</ parameters.uploads >>,<<# parameters.languages >>languages<</ parameters.languages >> \
              <<# pipeline.parameters.debug >>-vvv<</ pipeline.parameters.debug >>
           name: Pull database /uploads
-
-  clear_sage_logs:
-    steps:
-      - run:
-          command: rm -rf web/app/themes/<< pipeline.parameters.theme-name >>/storage/logs/*.log
-          name: Remove log files which make wp crash
-          working_directory: /tmp/project/public_html
-  approve_hold_for_deploy:
-    description: |
-      Approves the regression workflow that is waiting for the deploy to finish
-    parameters:
-      php-version:
-        type: string
-        default: "8.0"
-      repo:
-        description: "The repo to clone"
-        type: string
-        default: "bedrock-trellis-ds"
-      branch:
-        description: "Git branch to clone"
-        type: string
-        default: "develop"
-      site-name:
-        description: The site name in ansible config
-        type: string
-        default: "bedrock-develop"
-      theme-name:
-        description: The theme folder
-        type: string
-        default: "ds-custom"
-      public-dir:
-        description: Build assets folder
-        type: string
-        default: public
+jobs:
+  install-php-deps:
     executor: base_db
     steps:
       - add_github_key_to_known_hosts
-      - checkout_test_repo:
-          repo: << parameters.repo >>
-          branch: << parameters.branch >>
-      - prepare_ansible
+      - checkout
+      - trellis/prepare:
+          cache-version: << pipeline.parameters.trellis-cache-version >>
+          trellis-path: /tmp/project/trellis
+          vault-file: ~/.vault_pass
       - find_wp_install
-      - get_ansible_vars
-      - provision_server:
+      - provision-server:
           tags: nginx-includes,wordpress-setup,vendor-tokens,dotenv
           skip_tags: wordpress-setup-database,wordpress-setup-self-signed-certificate,wordpress-setup-nginx-client-cert
       - require_current_version
       - php/install-packages:
+          install-flags: --no-interaction --prefer-dist --ignore-platform-reqs
           app-dir: "project/public_html"
       - php/install-packages:
-          app-dir: project/public_html/web/app/themes/<< parameters.theme-name >>
+          install-flags: --no-interaction --prefer-dist --ignore-platform-reqs
+          app-dir: "project/public_html/<< pipeline.parameters.theme-path >>"
       - persist_to_workspace:
           root: /tmp
           paths:
@@ -319,9 +293,6 @@ commands:
           template: basic_fail_1
   build-theme:
     parameters:
-      php-version:
-        type: string
-        default: "8.0"
       circle_token:
         default: CIRCLE_TOKEN
         description: Environment variable that contains a CircleCI API token
