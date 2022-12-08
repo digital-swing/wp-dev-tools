@@ -516,8 +516,8 @@ jobs:
 workflows:
   build_test_deploy:
     jobs:
-      - build_php:
-          name: build_php-bedrock-trellis-ds-php8.0
+      - install-php-deps:
+          name: install-php-deps-bedrock-trellis-ds-php8.0
           pre-steps:
             - get_php_version
           context:
@@ -528,15 +528,15 @@ workflows:
           site-name: bedrock-develop
           theme-name: ds-custom
           public-dir: public
-      - build_js:
-          name: build_js-bedrock-trellis-ds-php8.0
+      - build-theme:
+          name: build-theme-bedrock-trellis-ds-php8.0
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-bedrock-trellis-ds-php8.0
+            - install-php-deps-bedrock-trellis-ds-php8.0
           repo: "bedrock-trellis-ds"
           branch: "main"
           site-name: bedrock-develop
@@ -551,8 +551,8 @@ workflows:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-bedrock-trellis-ds-php8.0
-            - build_js-bedrock-trellis-ds-php8.0
+            - install-php-deps-bedrock-trellis-ds-php8.0
+            - build-theme-bedrock-trellis-ds-php8.0
           filters:
             branches:
               only:
