@@ -410,28 +410,8 @@ jobs:
     executor: base_db
     parallelism: 5
     parameters:
-      repo:
-        description: "The repo to clone"
-        type: string
-        default: "bedrock-trellis-ds"
-      branch:
-        description: "Git branch to clone"
-        type: string
-        default: "develop"
-      site-name:
-        description: The site name in ansible config
-        type: string
-        default: "bedrock-develop"
-      theme-name:
-        description: The theme folder
-        type: string
-        default: "ds-custom"
-      public-dir:
-        description: Build assets folder
-        type: string
-        default: public
       package_name:
-        default: << parameters.site-name >>
+        default: << pipeline.parameters.theme-path >>
         description: Name of the plugin or theme (directory name)
         type: string
       package_type:
@@ -443,8 +423,8 @@ jobs:
           - project
         type: enum
     steps:
-      - checkout
-      - find_wp_install
+      - checkout:
+          path: project
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
@@ -523,11 +503,6 @@ workflows:
           context:
             - TOKENS
             - slack-secrets
-          repo: "bedrock-trellis-ds"
-          branch: "main"
-          site-name: bedrock-develop
-          theme-name: ds-custom
-          public-dir: public
       - build-theme:
           name: build-theme-bedrock-trellis-ds-php8.0
           pre-steps:
@@ -537,12 +512,6 @@ workflows:
             - slack-secrets
           requires:
             - install-php-deps-bedrock-trellis-ds-php8.0
-          repo: "bedrock-trellis-ds"
-          branch: "main"
-          site-name: bedrock-develop
-          theme-name: ds-custom
-          public-dir: public
-          production-flag: ":production"
       - codeception:
           name: codeception-bedrock-trellis-ds-php8.0
           pre-steps:
