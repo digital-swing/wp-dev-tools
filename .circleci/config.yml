@@ -38,7 +38,7 @@ parameters:
 
 images:
   php-ansible: &php-ansible
-    image: "digitalswing/php-ansible:7.4"
+    image: "digitalswing/php-ansible:8.0.11"
   mariadb: &mariadb
     image: "cimg/mariadb:10.10.1"
     environment:
@@ -141,7 +141,7 @@ commands:
     steps:
       - run:
           command: |
-            git clone -b php7.4 git@github.com:digital-swing/bedrock-trellis-ds.git << parameters.path >>
+            git clone -b main git@github.com:digital-swing/bedrock-trellis-ds.git << parameters.path >>
   require_current_version:
     description: Require current package branch
     steps:
@@ -517,42 +517,42 @@ workflows:
   build_test_deploy:
     jobs:
       - build_php:
-          name: build_php-bedrock-trellis-ds-php7.4
+          name: build_php-bedrock-trellis-ds-php8.0
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
           repo: "bedrock-trellis-ds"
-          branch: "php7.4"
+          branch: "main"
           site-name: bedrock-develop
           theme-name: ds-custom
           public-dir: public
       - build_js:
-          name: build_js-bedrock-trellis-ds-php7.4
+          name: build_js-bedrock-trellis-ds-php8.0
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-bedrock-trellis-ds-php7.4
+            - build_php-bedrock-trellis-ds-php8.0
           repo: "bedrock-trellis-ds"
-          branch: "php7.4"
+          branch: "main"
           site-name: bedrock-develop
           theme-name: ds-custom
           public-dir: public
           production-flag: ":production"
       - codeception:
-          name: codeception-bedrock-trellis-ds-php7.4
+          name: codeception-bedrock-trellis-ds-php8.0
           pre-steps:
             - get_php_version
           context:
             - TOKENS
             - slack-secrets
           requires:
-            - build_php-bedrock-trellis-ds-php7.4
-            - build_js-bedrock-trellis-ds-php7.4
+            - build_php-bedrock-trellis-ds-php8.0
+            - build_js-bedrock-trellis-ds-php8.0
           filters:
             branches:
               only:
@@ -563,7 +563,7 @@ workflows:
                 - /.*php-.*/
                 - /.*codeception.*/
           repo: "bedrock-trellis-ds"
-          branch: "php7.4"
+          branch: "main"
           site-name: bedrock-develop
           theme-name: ds-custom
           public-dir: public
