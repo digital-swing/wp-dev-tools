@@ -11,7 +11,7 @@
 	],
 	"minimum-stability": "dev",
 	"require": {
-		"php": "^7.4",
+		"php": "7.4.33",
 		"automattic/phpcs-neutron-ruleset": "3.4.0",
 		"codeception/module-asserts": "^1.0",
 		"codeception/module-cli": "^1.0",
