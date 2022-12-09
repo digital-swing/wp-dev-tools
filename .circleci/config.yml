@@ -531,8 +531,3 @@ workflows:
                 - develop
                 - /.*php-.*/
                 - /.*codeception.*/
-          repo: "bedrock-trellis-ds"
-          branch: "main"
-          site-name: bedrock-develop
-          theme-name: ds-custom
-          public-dir: public
