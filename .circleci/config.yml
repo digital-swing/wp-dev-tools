@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   browser-tools: circleci/browser-tools@1.4.0
-  slack: circleci/slack@4.10.1
+  slack: circleci/slack@4.12.0
   php: circleci/php@1.1.0
   node: circleci/node@5.0.3
   trellis: digital-swing/trellis-tools@0.2.1
