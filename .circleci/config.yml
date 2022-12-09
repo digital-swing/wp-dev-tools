@@ -299,6 +299,7 @@ jobs:
         type: env_var_name
     executor: base_db
     steps:
+      - add_github_key_to_known_hosts
       - checkout
       - trellis/prepare:
           cache-version: << pipeline.parameters.trellis-cache-version >>
