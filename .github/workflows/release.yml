@@ -1,0 +1,19 @@
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+name: Update release PR / Create release
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          bump-minor-pre-major: true
+          release-type: "php"
+          plugins: "sentence-case"
+          changelog-types: '[{"type": "feat","section": "Added"},{"type": "fix","section": "Fixed"},{"type": "refactor","section": "Changed"},{"type": "perf","section": "Optimizations"},{"type": "docs","section": "Documentation"},{"type": "style","hidden": true},{"type": "chore","hidden": true},{"type": "test","hidden": true}]'
+          token: ${{ secrets.GH_TOKEN }}
