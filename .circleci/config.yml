@@ -40,7 +40,7 @@ images:
   php-ansible: &php-ansible
     image: "digitalswing/php-ansible:7.4"
   mariadb: &mariadb
-    image: "cimg/mariadb:10.10.1"
+    image: "cimg/mariadb:10.11.7"
     environment:
       MYSQL_DATABASE: wordpress
       MYSQL_PASSWORD: wordpress
